@@ -9,6 +9,6 @@ curl -sS -X POST "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook" \
   -d "{\
     \"url\": \"${WORKER_URL%/}/webhook\",\
     \"secret_token\": \"${WEBHOOK_SECRET}\",\
-    \"allowed_updates\": [\"inline_query\", \"message\"],\
+    \"allowed_updates\": [\"inline_query\", \"message\", \"callback_query\"],\
     \"drop_pending_updates\": true\
   }" | python3 -m json.tool

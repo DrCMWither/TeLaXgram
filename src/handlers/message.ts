@@ -5,6 +5,7 @@ import { demoMarkdown, helpMarkdown } from "../rich/demo";
 import { DOC_TTL_SECONDS } from "../rich/limits";
 import { sourceFromText } from "../rich/parser";
 import type { Message } from "../telegram/types";
+import { sendStart } from "./start";
 
 interface Command {
   name: string;
@@ -21,6 +22,8 @@ export async function handleTextMessage(ctx: AppContext, message: Message): Prom
 
   switch (command.name) {
     case "start":
+      await sendStart(ctx, chatId, locale);
+      return;
     case "help":
       await sendRichOrFallback(ctx, chatId, {
         mode: "markdown",

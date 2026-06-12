@@ -53,6 +53,7 @@ export interface Update {
   update_id: number;
   message?: Message;
   inline_query?: InlineQuery;
+  callback_query?: CallbackQuery;
 }
 
 export interface InputRichMessage {
@@ -130,4 +131,35 @@ export interface SentMessage {
   chat: Chat;
   date?: number;
   text?: string;
+}
+
+export interface CallbackQuery {
+  id: string;
+  from: User;
+  message?: Message;
+  inline_message_id?: string;
+  chat_instance: string;
+  data?: string;
+  game_short_name?: string;
+}
+
+
+export interface AnswerCallbackQueryParams {
+  callback_query_id: string;
+  text?: string;
+  show_alert?: boolean;
+  url?: string;
+  cache_time?: number;
+}
+
+export interface EditMessageTextParams {
+  chat_id?: number | string;
+  message_id?: number;
+  inline_message_id?: string;
+  text?: string;
+  rich_message?: InputRichMessage;
+  reply_markup?: InlineKeyboardMarkup;
+  link_preview_options?: {
+    is_disabled?: boolean;
+  };
 }

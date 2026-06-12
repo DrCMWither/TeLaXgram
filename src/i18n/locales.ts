@@ -52,7 +52,30 @@ const zh = {
   "draft.unauthorized": "这份草稿不属于当前用户。",
   "draft.loadedTitle": "草稿 ref:{key}",
   "draft.loadedHtmlDescription": "以 Rich HTML 渲染",
-  "draft.loadedMarkdownDescription": "以 Rich Markdown 渲染"
+  "draft.loadedMarkdownDescription": "以 Rich Markdown 渲染",
+
+  "start.nav.prev": "‹ 上一页",
+  "start.nav.next": "下一页 ›",
+  "start.button.tryInline": "在当前聊天试用 inline",
+  "start.button.demo": "插入示例 query",
+  "start.error.badPage": "页码无效。",
+  "start.error.messageGone": "这条消息已经无法更新。",
+  "start.pageCounter": "第 {page} / {total} 页",
+  "start.inlineDemoQuery": "table: Key|Value; Speed|**42** ^{ms}; Status|==ready==; Formula|$E=mc^2$",
+
+  "start.page.intro.title": "TeLaXgram",
+  "start.page.intro.body": "把 Telegram inline 输入转换成富文本、表格和 LaTeX。\n\n最常用方式：\n{bot} md: # 标题\\NInline formula: $E=mc^2$\n\n在任意聊天输入机器人名即可使用 inline mode。",
+
+  "start.page.formats.title": "输入格式",
+  "start.page.formats.body": "md: Rich Markdown\nhtml: Rich HTML\ntable: A|B; x|1\nmath: \\int_0^1 x^2 dx\nimath: E=mc^2\n\n不写前缀时默认按 Markdown 渲染。",
+
+  "start.page.drafts.title": "长文本草稿",
+  "start.page.drafts.body": "私聊机器人发送：\n\n/save md:\n# 标题\n| A | B |\n\n保存后会返回 ref:<key>。\n之后在 inline mode 用 {bot} ref:<key> 调用。",
+
+  "start.page.commands.title": "常用命令",
+  "start.page.commands.body": "/render <source>：在私聊中直接渲染。\n/save <source>：保存长文本草稿。\n/help：发送完整语法说明。\n\n下面的按钮可以直接打开 inline 输入。",
+
+  "callback.unsupported": "暂不支持这个按钮。",
 } as const;
 
 export const SUPPORTED_LOCALES = ["zh-CN", "en", "ja"] as const;
@@ -116,7 +139,30 @@ export const messages: Record<Locale, Record<I18nKey, string>> = {
     "draft.unauthorized": "This draft does not belong to the current user.",
     "draft.loadedTitle": "Draft ref:{key}",
     "draft.loadedHtmlDescription": "Render as Rich HTML",
-    "draft.loadedMarkdownDescription": "Render as Rich Markdown"
+    "draft.loadedMarkdownDescription": "Render as Rich Markdown",
+
+    "start.nav.prev": "‹ Prev",
+    "start.nav.next": "Next ›",
+    "start.button.tryInline": "Try inline here",
+    "start.button.demo": "Insert demo query",
+    "start.error.badPage": "Invalid page.",
+    "start.error.messageGone": "This message can no longer be updated.",
+    "start.pageCounter": "Page {page}/{total}",
+    "start.inlineDemoQuery": "table: Key|Value; Speed|**42** ^{ms}; Status|==ready==; Formula|$E=mc^2$",
+
+    "start.page.intro.title": "TeLaXgram",
+    "start.page.intro.body": "Turn Telegram inline input into rich text, tables, and LaTeX.\n\nMost common usage:\n{bot} md: # Title\\NInline formula: $E=mc^2$\n\nType the bot username in any chat to use inline mode.",
+
+    "start.page.formats.title": "Input formats",
+    "start.page.formats.body": "md: Rich Markdown\nhtml: Rich HTML\ntable: A|B; x|1\nmath: \\int_0^1 x^2 dx\nimath: E=mc^2\n\nWithout a prefix, input is parsed as Markdown.",
+
+    "start.page.drafts.title": "Long drafts",
+    "start.page.drafts.body": "Send this to the bot in private:\n\n/save md:\n# Title\n| A | B |\n\nAfter saving, the bot returns ref:<key>.\nThen use {bot} ref:<key> in inline mode.",
+
+    "start.page.commands.title": "Commands",
+    "start.page.commands.body": "/render <source>: render directly in private chat.\n/save <source>: save a long draft.\n/help: send the full syntax guide.\n\nUse the buttons below to open inline mode.",
+
+    "callback.unsupported": "Unsupported button.",
   },
   ja: {
     "app.missingEnvSafe": "Worker に必要な環境変数がありません。",
@@ -172,6 +218,29 @@ export const messages: Record<Locale, Record<I18nKey, string>> = {
     "draft.unauthorized": "この下書きは現在のユーザーのものではありません。",
     "draft.loadedTitle": "下書き ref:{key}",
     "draft.loadedHtmlDescription": "Rich HTML としてレンダリング",
-    "draft.loadedMarkdownDescription": "Rich Markdown としてレンダリング"
+    "draft.loadedMarkdownDescription": "Rich Markdown としてレンダリング",
+
+    "start.nav.prev": "‹ 前へ",
+    "start.nav.next": "次へ ›",
+    "start.button.tryInline": "このチャットで inline を試す",
+    "start.button.demo": "サンプル query を挿入",
+    "start.error.badPage": "ページ番号が正しくありません。",
+    "start.error.messageGone": "このメッセージは更新できません。",
+    "start.pageCounter": "{page}/{total} ページ",
+    "start.inlineDemoQuery": "table: Key|Value; Speed|**42** ^{ms}; Status|==ready==; Formula|$E=mc^2$",
+
+    "start.page.intro.title": "TeLaXgram",
+    "start.page.intro.body": "Telegram inline 入力をリッチテキスト、表、LaTeX に変換します。\n\n基本的な使い方：\n{bot} md: # タイトル\\Nインライン数式: $E=mc^2$\n\n任意のチャットで Bot 名を入力すると inline mode を使えます。",
+
+    "start.page.formats.title": "入力形式",
+    "start.page.formats.body": "md: Rich Markdown\nhtml: Rich HTML\ntable: A|B; x|1\nmath: \\int_0^1 x^2 dx\nimath: E=mc^2\n\nprefix なしの場合は Markdown として解析します。",
+
+    "start.page.drafts.title": "長文下書き",
+    "start.page.drafts.body": "Bot との private chat に送信：\n\n/save md:\n# タイトル\n| A | B |\n\n保存後、ref:<key> が返されます。\nその後 inline mode で {bot} ref:<key> を使います。",
+
+    "start.page.commands.title": "コマンド",
+    "start.page.commands.body": "/render <source>: private chat で直接レンダリング。\n/save <source>: 長文下書きを保存。\n/help: 完全な構文説明を送信。\n\n下のボタンから inline mode を開けます。",
+
+    "callback.unsupported": "未対応のボタンです。",
   }
 };

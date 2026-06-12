@@ -1,11 +1,20 @@
 import type { AppContext } from "../context";
 import type { Update } from "../telegram/types";
+import { handleCallbackQuery } from "./callback";
 import { handleInlineQuery } from "./inline";
 import { handleTextMessage } from "./message";
 
-export async function dispatchUpdate(ctx: AppContext, update: Update): Promise<void> {
+export async function dispatchUpdate(
+  ctx: AppContext,
+  update: Update,
+): Promise<void> {
   if (update.inline_query) {
     await handleInlineQuery(ctx, update.inline_query);
+    return;
+  }
+
+  if (update.callback_query) {
+    await handleCallbackQuery(ctx, update.callback_query);
     return;
   }
 
@@ -14,5 +23,7 @@ export async function dispatchUpdate(ctx: AppContext, update: Update): Promise<v
     return;
   }
 
-  ctx.logger.debug("Ignored unsupported update", { update_id: update.update_id });
+  ctx.logger.debug("Ignored unsupported update", {
+    update_id: update.update_id,
+  });
 }
