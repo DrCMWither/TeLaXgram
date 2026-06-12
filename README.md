@@ -1,3 +1,5 @@
+<img src=https://github.com/DrCMWither/qsisp/blob/main/assets/logo.png width=300 />
+
 # TeLaXgram
 
 TeLaXgram is a Cloudflare Worker Telegram bot frame that turns inline text into Telegram Rich Messages, including tables and LaTeX formulas.
@@ -13,7 +15,7 @@ Before you begin, ensure you have the following:
 
 ```bash
 npm install
-cp .dev.vars.example .dev.vars
+cp .dev.vars.example .dev.varsS
 ```
 
 Fill `.dev.vars` is for local development. Do not commit it.
