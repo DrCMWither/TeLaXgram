@@ -1,0 +1,20 @@
+name = "telaxgram"
+main = "src/index.ts"
+compatibility_date = "2026-06-12"
+
+[observability]
+enabled = true
+
+[vars]
+BOT_USERNAME = "telaxgram_bot"
+
+[secrets]
+required = ["BOT_TOKEN", "WEBHOOK_SECRET"]
+
+# Optional: enable /save and ref:<key> long-draft support.
+# Create it with:
+#   npx wrangler kv namespace create DOCS
+# then uncomment this block and replace the id.
+# [[kv_namespaces]]
+# binding = "DOCS"
+# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
