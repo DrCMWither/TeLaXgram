@@ -1,4 +1,4 @@
-<img src=https://github.com/DrCMWither/qsisp/blob/main/assets/logo.png width=300 />
+<img src=https://github.com/DrCMWither/TeLaXgram/tree/master/assets/logo.png width=300 />
 
 # TeLaXgram
 
