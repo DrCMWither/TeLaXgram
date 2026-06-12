@@ -1,5 +1,7 @@
 import { TABLE_MAX_COLUMNS } from "./limits";
 
+const ROW_SPLIT_REGEX = /\r?\n|;/;
+
 export function compactTableToMarkdown(rawBody: string): string {
   const body = rawBody.trim();
 
@@ -8,7 +10,7 @@ export function compactTableToMarkdown(rawBody: string): string {
   }
 
   const lines = body
-    .split(/\r?\n|;/)
+    .split(ROW_SPLIT_REGEX)
     .map((x) => x.trim())
     .filter(Boolean);
 
@@ -17,7 +19,7 @@ export function compactTableToMarkdown(rawBody: string): string {
   const rows = lines.map(splitTableRow);
   const maxCols = Math.min(
     TABLE_MAX_COLUMNS,
-    Math.max(1, ...rows.map((row) => row.length))
+    Math.max(...rows.map((row) => row.length))
   );
 
   const normalized = rows.map((row) => {
@@ -26,9 +28,8 @@ export function compactTableToMarkdown(rawBody: string): string {
     return next;
   });
 
-  const first = normalized[0] ?? ["A", "B"];
-  const header = first.map(escapeMarkdownTableCell);
-  const separator = header.map(() => "---");
+  const header = pad(rows[0] ?? ["A", "B"], maxCols).map(escapeMarkdownTableCell);
+  const separator = Array(maxCols).fill("---");
 
   const tableLines = [
     `| ${header.join(" | ")} |`,
@@ -63,4 +64,8 @@ function escapeMarkdownTableCell(cell: string): string {
 
 function defaultTable(): string {
   return "| A | B |\n|---|---|\n| $x$ | 1 |";
+}
+
+function pad(row: string[], length: number): string[] {
+  return Array.from({ length }, (_, i) => row[i] ?? "");
 }
