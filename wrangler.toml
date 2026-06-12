@@ -7,6 +7,7 @@ enabled = true
 
 [vars]
 BOT_USERNAME = "telaxgram_bot"
+DEFAULT_LOCALE = "zh-CN"
 
 [secrets]
 required = ["BOT_TOKEN", "WEBHOOK_SECRET"]
