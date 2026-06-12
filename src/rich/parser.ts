@@ -37,8 +37,9 @@ export function sourceFromText(rawInput: string, locale: Locale = DEFAULT_LOCALE
   }
 
   const mathBlock = text.match(/^(?:math|latex|eq)\s*:\s*([\s\S]*)$/i);
-  if (mathBlock) {
-    const expr = mathBlock[1]?.trim() ?? "";
+  const latexDisplay = text.match(/^\\\[([\s\S]*)\\\]$/);
+  if (mathBlock || latexDisplay) {
+    const expr = (mathBlock?.[1] ?? latexDisplay?.[1] ?? "").trim();
     return {
       mode: "markdown",
       content: `$$\n${expr}\n$$`,
@@ -48,8 +49,9 @@ export function sourceFromText(rawInput: string, locale: Locale = DEFAULT_LOCALE
   }
 
   const inlineMath = text.match(/^(?:imath|inline-math)\s*:\s*([\s\S]*)$/i);
-  if (inlineMath) {
-    const expr = inlineMath[1]?.trim() ?? "";
+  const latexInline = text.match(/^\\\(([\s\S]*)\\\)$/);
+  if (inlineMath || latexInline) {
+    const expr = (inlineMath?.[1] ?? latexInline?.[1] ?? "").trim();
     return {
       mode: "markdown",
       content: `$${expr}$`,
