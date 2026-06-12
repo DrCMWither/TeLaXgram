@@ -61,7 +61,7 @@ const zh = {
   "start.error.badPage": "页码无效。",
   "start.error.messageGone": "这条消息已经无法更新。",
   "start.pageCounter": "第 {page} / {total} 页",
-  "start.inlineDemoQuery": "table: Key|Value; Speed|**42** ^{ms}; Status|==ready==; Formula|$E=mc^2$",
+  "start.inlineDemoQuery": "table: Key|Value; Time|**42**<sup>ms</sup>; Status|==OK==; Formula|$E=mc^2$",
 
   "start.page.intro.title": "TeLaXgram",
   "start.page.intro.body": "把 Telegram inline 输入转换成富文本、表格和 LaTeX。\n\n最常用方式：\n{bot} md: # 标题\\NInline formula: $E=mc^2$\n\n在任意聊天输入机器人名即可使用 inline mode。",
@@ -148,7 +148,7 @@ export const messages: Record<Locale, Record<I18nKey, string>> = {
     "start.error.badPage": "Invalid page.",
     "start.error.messageGone": "This message can no longer be updated.",
     "start.pageCounter": "Page {page}/{total}",
-    "start.inlineDemoQuery": "table: Key|Value; Speed|**42** ^{ms}; Status|==ready==; Formula|$E=mc^2$",
+    "start.inlineDemoQuery": "table: Key|Value; Time|**42**<sup>ms</sup>; Status|==OK==; Formula|$E=mc^2$",
 
     "start.page.intro.title": "TeLaXgram",
     "start.page.intro.body": "Turn Telegram inline input into rich text, tables, and LaTeX.\n\nMost common usage:\n{bot} md: # Title\\NInline formula: $E=mc^2$\n\nType the bot username in any chat to use inline mode.",
@@ -227,7 +227,7 @@ export const messages: Record<Locale, Record<I18nKey, string>> = {
     "start.error.badPage": "ページ番号が正しくありません。",
     "start.error.messageGone": "このメッセージは更新できません。",
     "start.pageCounter": "{page}/{total} ページ",
-    "start.inlineDemoQuery": "table: Key|Value; Speed|**42** ^{ms}; Status|==ready==; Formula|$E=mc^2$",
+    "start.inlineDemoQuery": "table: Key|Value; Time|**42**<sup>ms</sup>; Status|==OK==; Formula|$E=mc^2$",
 
     "start.page.intro.title": "TeLaXgram",
     "start.page.intro.body": "Telegram inline 入力をリッチテキスト、表、LaTeX に変換します。\n\n基本的な使い方：\n{bot} md: # タイトル\\Nインライン数式: $E=mc^2$\n\n任意のチャットで Bot 名を入力すると inline mode を使えます。",
