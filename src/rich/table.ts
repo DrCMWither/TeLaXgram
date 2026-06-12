@@ -28,7 +28,7 @@ export function compactTableToMarkdown(rawBody: string): string {
     return next;
   });
 
-  const header = pad(rows[0] ?? ["A", "B"], maxCols).map(escapeMarkdownTableCell);
+  const header = normalized[0]!.map(escapeMarkdownTableCell);
   const separator = Array(maxCols).fill("---");
 
   const tableLines = [
