@@ -15,7 +15,7 @@ Before you begin, ensure you have the following:
 
 ```bash
 npm install
-cp .dev.vars.example .dev.varsS
+cp .dev.vars.example .dev.vars
 ```
 
 Fill `.dev.vars` is for local development. Do not commit it.

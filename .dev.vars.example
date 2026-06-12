@@ -1,0 +1,3 @@
+BOT_TOKEN="114514:replace-me"
+WEBHOOK_SECRET="replace-it-with-a-long-random-string"
+BOT_USERNAME="YourBotNameBot"
