@@ -5,7 +5,7 @@ import { DraftStore } from "../src/storage/draftStore";
 
 class MemoryKv {
   readonly values = new Map<string, string>();
-  lastExpirationTtl?: number;
+  lastExpirationTtl?: number | undefined;
 
   async put(
     key: string,

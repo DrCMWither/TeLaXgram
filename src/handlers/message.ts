@@ -3,6 +3,7 @@ import { localeFromTelegramLanguage, t, type Locale } from "../i18n";
 import { sendPlain, sendRichOrFallback } from "./common";
 import { demoMarkdown, helpMarkdown } from "../rich/demo";
 import { DOC_TTL_SECONDS } from "../rich/limits";
+import { formatLintResult, lintRichSource, lintUsage } from "../rich/lint";
 import { sourceFromText } from "../rich/parser";
 import type { Message } from "../telegram/types";
 import { sendStart } from "./start";
@@ -43,6 +44,9 @@ export async function handleTextMessage(ctx: AppContext, message: Message): Prom
       }, locale);
       return;
 
+    case "lint":
+      await lintNow(ctx, message, command.args, locale);
+      return;
     case "render":
       await renderNow(ctx, message, command.args, locale);
       return;
@@ -64,6 +68,24 @@ async function renderNow(
 ): Promise<void> {
   const src = sourceFromText(args.trim() || demoMarkdown(locale), locale);
   await sendRichOrFallback(ctx, message.chat.id, src, locale);
+}
+
+async function lintNow(
+  ctx: AppContext,
+  message: Message,
+  args: string,
+  locale: Locale
+): Promise<void> {
+  const input = args.trimStart();
+
+  if (!input) {
+    await sendPlain(ctx, message.chat.id, lintUsage(locale));
+    return;
+  }
+
+  const src = sourceFromText(input, locale);
+  const result = lintRichSource(src);
+  await sendPlain(ctx, message.chat.id, formatLintResult(src, result, locale));
 }
 
 async function saveDraft(
