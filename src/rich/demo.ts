@@ -68,12 +68,12 @@ Telegram inline rich text / table / LaTeX renderer.
 
 ### Rich Markdown
 
-${bt}${bot} md: # Title\nInline formula: $E=mc^2$${bt}
+${bt}${bot} md: # Title\NInline formula: $E=mc^2$${bt}
 
 
 ### Table
 
-${bt}${bot} table: Key|Value; Speed|**42** <sup>ms</sup>; Status|==ready==; Formula|$E=mc^2$${bt}
+${bt}${bot} table: Key|Value; Time|**42** <sup>ms</sup>; Status|==OK==; Formula|$E=mc^2$${bt}
 
 ### Block formula
 
@@ -126,12 +126,12 @@ Telegram inline のリッチテキスト / 表 / LaTeX レンダラー。
 
 ### Rich Markdown
 
-${bt}${bot} md: # タイトル\nインライン数式: $E=mc^2$${bt}
+${bt}${bot} md: # タイトル\Nインライン数式: $E=mc^2$${bt}
 
 
 ### 表
 
-${bt}${bot} table: 項目|値; Speed|**42** <sup>ms</sup>; Status|==ready==; Formula|$E=mc^2$${bt}
+${bt}${bot} table: 項目|値; Time|**42** <sup>ms</sup>; Status|==OK==; Formula|$E=mc^2$${bt}
 
 ### ブロック数式
 
@@ -183,12 +183,12 @@ Telegram inline 富文本 / 表格 / LaTeX 渲染器。
 
 ###  富文本 MD
 
-${bt}${bot} md: # 标题\nInline formula: $E=mc^2$${bt}
+${bt}${bot} md: # 标题\NInline formula: $E=mc^2$${bt}
 
 
 ### 表格
 
-${bt}${bot} table: 键|值; Speed|**42** <sup>ms</sup>; Status|==ready==; Formula|$E=mc^2$${bt}
+${bt}${bot} table: 键|值; Time|**42** <sup>ms</sup>; Status|==OK==; Formula|$E=mc^2$${bt}
 
 ### 块公式
 
