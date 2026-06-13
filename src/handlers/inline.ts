@@ -28,7 +28,12 @@ export async function handleInlineQuery(ctx: AppContext, inlineQuery: InlineQuer
     }
   });
 
-  if (answer.ok || isRichSourceError(source)) return;
+  if (answer.ok) return;
+
+  if (isRichSourceError(source)) {
+    ctx.logger.warn("answerInlineQuery failed for render error result", answer.error);
+    return;
+  }
 
   // Most commonly triggered by Telegram rejecting malformed HTML/Markdown.
   ctx.logger.warn("answerInlineQuery failed; retrying with a plain fallback", answer.error);
