@@ -10,12 +10,13 @@ import { sendStart } from "./start";
 interface Command {
   name: string;
   args: string;
+  target?: string;
 }
 
 export async function handleTextMessage(ctx: AppContext, message: Message): Promise<void> {
   const text = message.text ?? "";
   const chatId = message.chat.id;
-  const command = parseCommand(text);
+  const command = parseCommand(text, ctx.env.BOT_USERNAME);
   const locale = localeFromTelegramLanguage(message.from?.language_code, ctx.env.DEFAULT_LOCALE);
 
   if (!command) return;
@@ -115,12 +116,21 @@ async function saveDraft(
   });
 }
 
-function parseCommand(text: string): Command | null {
-  const match = text.match(/^\/([A-Za-z0-9_]+)(?:@\w+)?(?:\s|$)/);
+function parseCommand(text: string, ownBotUsername?: string): Command | null {
+  const match = text.match(/^\/([A-Za-z0-9_]+)(?:@([A-Za-z0-9_]+))?(?:\s|$)/);
   if (!match) return null;
 
+  const name = (match[1] ?? "").toLowerCase();
+  const target = match[2] ?? "";
+
+  if (target) {
+    if (!ownBotUsername) return null;
+    if (target.toLowerCase() !== ownBotUsername.toLowerCase()) return null;
+  }
+
   return {
-    name: (match[1] ?? "").toLowerCase(),
-    args: text.slice(match[0].length)
+    name,
+    target,
+    args: text.slice(match[0].length),
   };
 }
