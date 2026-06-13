@@ -120,8 +120,8 @@ function parseCommand(text: string, ownBotUsername?: string): Command | null {
   const match = text.match(/^\/([A-Za-z0-9_]+)(?:@([A-Za-z0-9_]+))?(?:\s|$)/);
   if (!match) return null;
 
-  const name = (match[1] ?? "").toLowerCase();
-  const target = match[2] ?? "";
+  const name = (match?.[1] ?? "").toLowerCase();
+  const target = match?.[2]!;
 
   if (target) {
     if (!ownBotUsername) return null;
