@@ -1,4 +1,5 @@
 import { DEFAULT_LOCALE, type Locale } from "../i18n";
+import { botMention } from "../utils/botUsername";
 
 export function demoMarkdown(locale: Locale = DEFAULT_LOCALE): string {
   if (locale === "en") {
@@ -54,7 +55,7 @@ $$
 export const DEMO_MD = demoMarkdown(DEFAULT_LOCALE);
 
 export function helpMarkdown(botUsername?: string, locale: Locale = DEFAULT_LOCALE): string {
-  const bot = botUsername ? `@${botUsername}` : "@YourBot";
+  const bot = botMention(botUsername);
   const bt = "`";
   const cb = "```";
 

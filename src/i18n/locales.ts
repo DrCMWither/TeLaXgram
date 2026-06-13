@@ -28,8 +28,10 @@ const zh = {
   "inline.plainTitle": "仅发送源码",
   "inline.plainDescription": "不解析富文本",
   "inline.lint.truncatedTitle": "Inline query 可能已被 Telegram 截断",
-"inline.lint.truncatedDescription": "Inline query 已达到 256 字符上限。长文本请使用 /save 后通过 ref:<key> 调用。",
-"inline.lint.truncatedBody": "Inline query 可能已被 Telegram 截断。",
+  "inline.lint.truncatedDescription": "Inline query 已达到 256 字符上限。长文本请使用 /save 后通过 ref:<key> 调用。",
+  "inline.lint.truncatedBody": "Inline query 可能已被 Telegram 截断。",
+  "inline.lint.lengthLabel": "收到长度",
+  "inline.lint.useLabel": "建议用法",
 
   "parser.html.title": "渲染为富文本 HTML",
   "parser.html.description": "支持 <table>、<tg-math-block> 等 Telegram Rich HTML",
@@ -140,6 +142,9 @@ const zh = {
   "start.page.commands.body": "/render <source>：在私聊中直接渲染。\n/save <source>：保存长文本草稿。\n/help：发送完整语法说明。\n\n下面的按钮可以直接打开 inline 输入。",
 
   "callback.unsupported": "暂不支持这个按钮。",
+
+  "save.notice.inlineLabel": "Inline 用法",
+  "save.notice.refLabel": "草稿引用",
 } as const;
 
 export const SUPPORTED_LOCALES = ["zh-CN", "en", "ja"] as const;
@@ -179,8 +184,10 @@ export const messages: Record<Locale, Record<I18nKey, string>> = {
     "inline.plainTitle": "Send source only",
     "inline.plainDescription": "Do not parse rich text",
     "inline.lint.truncatedTitle": "Inline query may be truncated by Telegram",
-"inline.lint.truncatedDescription": "The inline query has reached Telegram's 256-character limit. Use /save and then ref:<key> for long text.",
-"inline.lint.truncatedBody": "The inline query may have been truncated by Telegram.",
+    "inline.lint.truncatedDescription": "The inline query has reached Telegram's 256-character limit. Use /save and then ref:<key> for long text.",
+    "inline.lint.truncatedBody": "The inline query may have been truncated by Telegram.",
+    "inline.lint.lengthLabel": "Received length",
+    "inline.lint.useLabel": "Recommended usage",
 
     "parser.html.title": "Render as Rich HTML",
     "parser.html.description": "Supports Telegram Rich HTML such as <table> and <tg-math-block>",
@@ -292,6 +299,9 @@ export const messages: Record<Locale, Record<I18nKey, string>> = {
     "start.page.commands.body": "/render <source>: render directly in private chat.\n/save <source>: save a long draft.\n/help: send the full syntax guide.\n\nUse the buttons below to open inline mode.",
 
     "callback.unsupported": "Unsupported button.",
+
+    "save.notice.inlineLabel": "Inline usage",
+    "save.notice.refLabel": "Draft ref",
   },
   ja: {
     "app.missingEnvSafe": "Worker に必要な環境変数がありません。",
@@ -323,8 +333,10 @@ export const messages: Record<Locale, Record<I18nKey, string>> = {
     "inline.plainTitle": "ソースだけを送信",
     "inline.plainDescription": "リッチテキストとして解析しない",
     "inline.lint.truncatedTitle": "Inline query が Telegram により切り詰められた可能性があります",
-"inline.lint.truncatedDescription": "Inline query が Telegram の 256 文字上限に達しています。長文は /save 後に ref:<key> で呼び出してください。",
-"inline.lint.truncatedBody": "Inline query が Telegram により切り詰められた可能性があります。",
+    "inline.lint.truncatedDescription": "Inline query が Telegram の 256 文字上限に達しています。長文は /save 後に ref:<key> で呼び出してください。",
+    "inline.lint.truncatedBody": "Inline query が Telegram により切り詰められた可能性があります。",
+    "inline.lint.lengthLabel": "受信した長さ",
+    "inline.lint.useLabel": "推奨される使い方",
 
     "parser.html.title": "Rich HTML としてレンダリング",
     "parser.html.description": "<table>、<tg-math-block> などの Telegram Rich HTML に対応",
@@ -437,5 +449,8 @@ export const messages: Record<Locale, Record<I18nKey, string>> = {
     "start.page.commands.body": "/render <source>: private chat で直接レンダリング。\n/save <source>: 長文下書きを保存。\n/help: 完全な構文説明を送信。\n\n下のボタンから inline mode を開けます。",
 
     "callback.unsupported": "未対応のボタンです。",
+
+    "save.notice.inlineLabel": "inline での使い方",
+    "save.notice.refLabel": "下書き ref",
   }
 };

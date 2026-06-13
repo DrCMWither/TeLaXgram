@@ -10,7 +10,7 @@ class MemoryKv {
   async put(
     key: string,
     value: string,
-    options?: { expirationTtl?: number },
+    options?: { expirationTtl?: number; },
   ): Promise<void> {
     this.values.set(key, value);
     this.lastExpirationTtl = options?.expirationTtl;

@@ -22,19 +22,17 @@ export function compactTableToMarkdown(rawBody: string): string {
     Math.max(...rows.map((row) => row.length))
   );
 
-  const normalized = rows.map((row) => {
-    const next = row.slice(0, maxCols);
-    while (next.length < maxCols) next.push("");
-    return next;
-  });
+  const normalized = rows.map((row) => pad(row.slice(0, maxCols), maxCols));
+  const [headerRow, ...bodyRows] = normalized;
+  if (!headerRow) return defaultTable();
 
-  const header = normalized[0]!.map(escapeMarkdownTableCell);
+  const header = headerRow.map(escapeMarkdownTableCell);
   const separator = Array(maxCols).fill("---");
 
   const tableLines = [
     `| ${header.join(" | ")} |`,
     `| ${separator.join(" | ")} |`,
-    ...normalized.slice(1).map((row) => `| ${row.map(escapeMarkdownTableCell).join(" | ")} |`)
+    ...bodyRows.map((row) => `| ${row.map(escapeMarkdownTableCell).join(" | ")} |`),
   ];
 
   return tableLines.join("\n");

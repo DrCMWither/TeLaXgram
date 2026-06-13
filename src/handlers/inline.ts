@@ -10,7 +10,14 @@ import type { InlineQuery, InlineQueryResultArticle } from "../telegram/types";
 import { describeTelegramFailure } from "../telegram/client";
 import { shortHash } from "../utils/hash";
 import { limitChars } from "../utils/text";
-import { formatLintResult, lintRichSource, type RichLintResult } from "../rich/lint";
+import { noticeRichSource } from "../rich/notice";
+
+import {
+  formatLintResult,
+  formatLintResultRichSource,
+  lintRichSource,
+  type RichLintResult,
+} from "../rich/lint";
 import {
   PLAIN_MESSAGE_LIMIT,
   TELEGRAM_INLINE_QUERY_LIMIT,
@@ -137,7 +144,7 @@ async function buildInlineResults(
   locale: Locale,
   options: InlineBuildOptions = { lint: true, rawQuery: "" },
 ): Promise<InlineQueryResultArticle[]> {
-  const limitWarningResults = await buildInlineQueryLimitResults(options.rawQuery, locale, options.lint);
+  const limitWarningResults = await buildInlineQueryLimitResults(options.rawQuery, locale);
 
   if (isRichSourceError(source)) {
     return [
@@ -186,7 +193,7 @@ async function buildInlineResults(
   const results: InlineQueryResultArticle[] = [
     ...limitWarningResults,
     makeRichInlineResult(`rich_${baseId}`, source, {
-      title: lint.warnings > 0 ? `${source.title}` : `${source.title}`,
+      title: lint.warnings > 0 ? `⚠️ ${source.title}` : `✅ ${source.title}`,
       description: inlineLintDescription(source, lint, locale),
     }),
   ];
@@ -232,27 +239,25 @@ function makeLintInlineResult(
   result: RichLintResult,
   locale: Locale,
 ): InlineQueryResultArticle {
-  const title =
-    result.ok
-      ? result.warnings > 0
-        ? `${t(locale, "command.lint.title")}`
-        : t(locale, "lint.status.pass")
-      : t(locale, "lint.status.fail");
+  const title = result.ok
+    ? result.warnings > 0
+      ? `⚠️ ${t(locale, "command.lint.title")}`
+      : t(locale, "lint.status.pass")
+    : t(locale, "lint.status.fail");
 
-  return makePlainInlineResult(
-    id,
-    limitInlineText(title, 80) ?? title,
-    inlineLintSummary(result, locale),
-    formatLintResult(src, result, locale),
-  );
+  const lintSrc = formatLintResultRichSource(src, result, locale);
+
+  return makeRichInlineResult(id, lintSrc, {
+    title,
+    description: inlineLintSummary(result, locale),
+  });
 }
 
 async function buildInlineQueryLimitResults(
   rawQuery: string,
   locale: Locale,
-  lintEnabled: boolean,
 ): Promise<InlineQueryResultArticle[]> {
-  if (!lintEnabled || !isNearTelegramInlineQueryLimit(rawQuery)) {
+  if (!isNearTelegramInlineQueryLimit(rawQuery)) {
     return [];
   }
 
@@ -268,16 +273,32 @@ function makeInlineQueryLimitResult(
   query: string,
   locale: Locale,
 ): InlineQueryResultArticle {
-  return makePlainInlineResult(
-    id,
-    t(locale, "inline.lint.truncatedTitle"),
-    t(locale, "inline.lint.truncatedDescription"),
-    [
+  const src = noticeRichSource({
+    kind: "warning",
+    title: t(locale, "inline.lint.truncatedTitle"),
+    description: t(locale, "inline.lint.truncatedDescription"),
+    paragraphs: [
       t(locale, "inline.lint.truncatedBody"),
-      "",
-      `Received length: ${inlineQueryLength(query)} / ${TELEGRAM_INLINE_QUERY_LIMIT}`,
-    ].join("\n"),
-  );
+      t(locale, "inline.lint.truncatedDescription"),
+    ],
+    facts: [
+      {
+        label: t(locale, "inline.lint.lengthLabel"),
+        value: `${inlineQueryLength(query)} / ${TELEGRAM_INLINE_QUERY_LIMIT}`,
+        code: true,
+      },
+      {
+        label: "Use",
+        value: "/save md:",
+        code: true,
+      },
+    ],
+  });
+
+  return makeRichInlineResult(id, src, {
+    title: t(locale, "inline.lint.truncatedTitle"),
+    description: t(locale, "inline.lint.truncatedDescription"),
+  });
 }
 
 function inlineLintDescription(

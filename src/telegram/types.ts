@@ -90,7 +90,7 @@ export interface InlineKeyboardMarkup {
 export interface InlineQueryResultsButton {
   text: string;
   start_parameter?: string;
-  web_app?: { url: string };
+  web_app?: { url: string; };
 }
 
 export interface InlineQueryResultArticle {

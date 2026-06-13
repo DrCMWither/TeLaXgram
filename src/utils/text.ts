@@ -1,9 +1,15 @@
 export function limitChars(input: string, maxChars: number, suffix = "\n\n…[truncated]"): string {
+  if (maxChars <= 0) return "";
+
   const chars = Array.from(input);
   if (chars.length <= maxChars) return input;
 
-  const suffixLen = Array.from(suffix).length;
-  return chars.slice(0, Math.max(0, maxChars - suffixLen)).join("") + suffix;
+  const suffixChars = Array.from(suffix);
+  if (suffixChars.length >= maxChars) {
+    return suffixChars.slice(0, maxChars).join("");
+  }
+
+  return chars.slice(0, maxChars - suffixChars.length).join("") + suffix;
 }
 
 export function decodeInlineEscapes(input: string): string {

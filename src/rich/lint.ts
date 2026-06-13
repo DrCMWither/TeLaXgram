@@ -7,6 +7,7 @@ import {
   TABLE_MAX_COLUMNS,
 } from "./limits";
 import type { RichSource } from "./types";
+import { escapeHtml, htmlCode } from "./escape";
 
 export type RichLintLevel = "info" | "warn" | "error";
 type I18nValues = Record<string, string | number>;
@@ -347,7 +348,7 @@ export function formatLintResult(
   for (const issue of result.issues.slice(0, 24)) {
     const marker = issue.level === "error" ? "❌" : issue.level === "warn" ? "⚠️" : "ℹ️";
     const at = issue.index === undefined ? "" : t(locale, "lint.output.at", { index: issue.index });
-    const message = t(locale, ISSUE_I18N_KEYS[issue.code], issue.params);
+    const message = formatLintIssueMessage(issue, locale);
     lines.push(t(locale, "lint.output.issueLine", { marker, code: issue.code, at, message }));
   }
 
@@ -378,7 +379,7 @@ function lintHtmlSyntax(
     lintHtmlEntities(content, issues);
   }
 
-  const stack: Array<{ name: string; index: number }> = [];
+  const stack: Array<{ name: string; index: number; }> = [];
   const tagRe = /<!--[\s\S]*?-->|<\/?[A-Za-z][A-Za-z0-9-]*(?:\s+[^<>]*?)?\/?\s*>|<[^>]*>/g;
 
   for (const match of content.matchAll(tagRe)) {
@@ -478,7 +479,7 @@ function parseHtmlAttrs(attrText: string, attrBaseIndex: number): ParsedHtmlAttr
 
 function validateHtmlAttributes(
   tag: HtmlTag,
-  stack: Array<{ name: string; index: number }>,
+  stack: Array<{ name: string; index: number; }>,
   issues: RichLintIssue[],
   stats: RichLintStats,
 ): void {
@@ -553,7 +554,7 @@ function validateHtmlAttributes(
   }
 }
 
-function closeHtmlTag(tag: HtmlTag, stack: Array<{ name: string; index: number }>, issues: RichLintIssue[]): void {
+function closeHtmlTag(tag: HtmlTag, stack: Array<{ name: string; index: number; }>, issues: RichLintIssue[]): void {
   let found = -1;
   for (let i = stack.length - 1; i >= 0; i -= 1) {
     if (stack[i]?.name === tag.name) {
@@ -632,7 +633,7 @@ function extractHtmlFormulas(content: string): FormulaSnippet[] {
 
 function extractMarkdownFormulas(content: string, issues: RichLintIssue[]): FormulaSnippet[] {
   const formulas: FormulaSnippet[] = [];
-  const blockMathRanges: Array<{ start: number; end: number }> = [];
+  const blockMathRanges: Array<{ start: number; end: number; }> = [];
 
   const work = content
     .replace(/```([A-Za-z0-9_-]*)[^\n]*\n([\s\S]*?)```/g, (full, lang: string | undefined, source: string | undefined, offset: number) => {
@@ -726,8 +727,8 @@ function lintLatexFormula(formula: FormulaSnippet, issues: RichLintIssue[], stat
 }
 
 function lintLatexDelimiters(source: string, baseIndex: number, issues: RichLintIssue[]): void {
-  const stack: Array<{ open: string; close: string; index: number; level: "error" | "warn" }> = [];
-  const pairs: Record<string, { close: string; level: "error" | "warn" }> = {
+  const stack: Array<{ open: string; close: string; index: number; level: "error" | "warn"; }> = [];
+  const pairs: Record<string, { close: string; level: "error" | "warn"; }> = {
     "{": { close: "}", level: "error" },
     "[": { close: "]", level: "warn" },
     "(": { close: ")", level: "warn" },
@@ -767,7 +768,7 @@ function lintLatexDelimiters(source: string, baseIndex: number, issues: RichLint
 }
 
 function lintLatexBeginEnd(source: string, baseIndex: number, issues: RichLintIssue[]): void {
-  const stack: Array<{ env: string; index: number }> = [];
+  const stack: Array<{ env: string; index: number; }> = [];
   const envRe = /\\(begin|end)\s*\{([^{}]+)\}/g;
 
   for (const match of source.matchAll(envRe)) {
@@ -911,7 +912,7 @@ function isEmojiSrc(value: string): boolean {
   return /^tg:\/\/emoji\?id=\d+$/.test(value);
 }
 
-function countIssueLevels(issues: RichLintIssue[]): { errors: number; warnings: number } {
+function countIssueLevels(issues: RichLintIssue[]): { errors: number; warnings: number; } {
   let errors = 0;
   let warnings = 0;
 
@@ -998,4 +999,94 @@ function findBalancedGroup(input: string, start: number, open: string, close: st
     }
   }
   return -1;
+}
+
+export function formatLintIssueMessage(
+  issue: RichLintIssue,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  return t(locale, ISSUE_I18N_KEYS[issue.code], issue.params);
+}
+
+export function formatLintResultRichSource(
+  src: RichSource,
+  result: RichLintResult,
+  locale: Locale = DEFAULT_LOCALE,
+): RichSource {
+  const status = t(locale, result.ok ? "lint.status.pass" : "lint.status.fail");
+  const summary = t(locale, "lint.output.summary", {
+    errors: result.errors,
+    warnings: result.warnings,
+  });
+
+  const lines: string[] = [
+    `<h4>${escapeHtml(status)}</h4>`,
+    "<blockquote>",
+    escapeHtml(t(locale, "lint.output.mode", { mode: src.mode })),
+    "<br>",
+    escapeHtml(t(locale, "lint.output.stats", {
+      chars: result.stats.chars,
+      charLimit: RICH_CHAR_LIMIT,
+      formulas: result.stats.formulas,
+      htmlTags: result.stats.htmlTags,
+      media: result.stats.media,
+      maxNesting: result.stats.maxNesting,
+    })),
+    "<br>",
+    escapeHtml(summary),
+    "</blockquote>",
+  ];
+
+  if (result.issues.length === 0) {
+    lines.push(`<p>${escapeHtml(t(locale, "lint.output.noIssues"))}</p>`);
+  } else {
+    lines.push("<details open>");
+    lines.push(`<summary>${escapeHtml(t(locale, "lint.output.issues"))}</summary>`);
+    lines.push("<ul>");
+
+    for (const issue of result.issues.slice(0, 24)) {
+      const marker =
+        issue.level === "error" ? "❌" :
+          issue.level === "warn" ? "⚠️" :
+            "ℹ️";
+
+      const at =
+        issue.index === undefined
+          ? ""
+          : t(locale, "lint.output.at", { index: issue.index });
+
+      const message = formatLintIssueMessage(issue, locale);
+
+      lines.push(
+        [
+          "<li>",
+          escapeHtml(marker),
+          " ",
+          htmlCode(`${issue.code}${at}`),
+          " ",
+          escapeHtml(message),
+          "</li>",
+        ].join(""),
+      );
+    }
+
+    lines.push("</ul>");
+
+    if (result.issues.length > 24) {
+      lines.push(
+        `<p>${escapeHtml(t(locale, "lint.output.more", {
+          count: result.issues.length - 24,
+        }))}</p>`,
+      );
+    }
+
+    lines.push("</details>");
+  }
+
+  return {
+    mode: "html",
+    title: status,
+    description: summary,
+    content: lines.join("\n"),
+  };
 }

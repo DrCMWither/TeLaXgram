@@ -14,8 +14,8 @@ export interface TelegramFailure {
 }
 
 export type TelegramCallResult<T> =
-  | { ok: true; result: T; status: number }
-  | { ok: false; error: TelegramFailure; status?: number };
+  | { ok: true; result: T; status: number; }
+  | { ok: false; error: TelegramFailure; status?: number; };
 
 export interface TelegramClientOptions {
   timeoutMs?: number;
@@ -168,7 +168,7 @@ export function describeTelegramFailure(error: TelegramFailure): string {
 
 function readTelegramDescription(raw: unknown): string | undefined {
   if (typeof raw === "object" && raw && "description" in raw) {
-    const value = (raw as { description?: unknown }).description;
+    const value = (raw as { description?: unknown; }).description;
     return typeof value === "string" ? value : undefined;
   }
   return undefined;
@@ -176,7 +176,7 @@ function readTelegramDescription(raw: unknown): string | undefined {
 
 function readTelegramErrorCode(raw: unknown): number | undefined {
   if (typeof raw === "object" && raw && "error_code" in raw) {
-    const value = (raw as { error_code?: unknown }).error_code;
+    const value = (raw as { error_code?: unknown; }).error_code;
     return typeof value === "number" ? value : undefined;
   }
   return undefined;
@@ -184,7 +184,7 @@ function readTelegramErrorCode(raw: unknown): number | undefined {
 
 function readTelegramRetryAfter(raw: unknown): number | undefined {
   if (typeof raw === "object" && raw && "parameters" in raw) {
-    const params = (raw as { parameters?: { retry_after?: unknown } }).parameters;
+    const params = (raw as { parameters?: { retry_after?: unknown; }; }).parameters;
     return typeof params?.retry_after === "number" ? params.retry_after : undefined;
   }
   return undefined;

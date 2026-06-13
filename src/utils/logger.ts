@@ -8,7 +8,7 @@ export interface Logger {
 }
 
 export class ConsoleLogger implements Logger {
-  constructor(private readonly requestId: string) {}
+  constructor(private readonly requestId: string) { }
 
   debug(message: string, data?: unknown): void {
     console.log(JSON.stringify({ level: "debug", requestId: this.requestId, message, data }));

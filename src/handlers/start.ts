@@ -12,7 +12,12 @@ import type {
   InlineKeyboardButton,
   InlineKeyboardMarkup,
 } from "../telegram/types";
-import { sendPlain } from "./common";
+import { sendPlain, sendRichSourceOrPlain } from "./common";
+
+import { inputRichMessage } from "../rich/input";
+import type { RichSource } from "../rich/types";
+import { escapeHtml, htmlInline } from "../rich/escape";
+import { botMention } from "../utils/botUsername";
 
 const START_CALLBACK_PREFIX = "tlx:start:";
 
@@ -38,6 +43,8 @@ const START_PAGES = [
   body: I18nKey;
 }[];
 
+const FIRST_START_PAGE = START_PAGES[0];
+
 export async function sendStart(
   ctx: AppContext,
   chatId: number | string,
@@ -46,10 +53,17 @@ export async function sendStart(
   const page = 0;
   const bot = botMention(ctx.env.BOT_USERNAME);
 
-  await sendPlain(ctx, chatId, renderStartPage(page, locale, bot), {
-    link_preview_options: { is_disabled: true },
-    reply_markup: startKeyboard(page, locale),
-  });
+  const src = renderStartPageRichSource(page, locale, bot);
+
+  await sendRichSourceOrPlain(
+    ctx,
+    chatId,
+    src,
+    renderStartPage(page, locale, bot),
+    {
+      reply_markup: startKeyboard(page, locale),
+    },
+  );
 }
 
 export async function handleStartCallback(
@@ -83,21 +97,39 @@ export async function handleStartCallback(
   const page = clampPage(requestedPage, START_PAGES.length);
   const bot = botMention(ctx.env.BOT_USERNAME);
 
-  const payload: EditMessageTextParams = {
+  const richPayload: EditMessageTextParams = {
     chat_id: message.chat.id,
     message_id: message.message_id,
-    text: renderStartPage(page, locale, bot),
-    link_preview_options: { is_disabled: true },
+    rich_message: inputRichMessage(renderStartPageRichSource(page, locale, bot)),
     reply_markup: startKeyboard(page, locale),
   };
 
-  const result = await ctx.bot.call("editMessageText", payload);
+  const result = await ctx.bot.call("editMessageText", richPayload);
+
   if (!result.ok) {
-    ctx.logger.warn("editMessageText failed for /start pager", {
+    ctx.logger.warn("editMessageText rich_message failed for /start pager; retrying plain text", {
       error: result.error,
       callback_query_id: query.id,
       page,
     });
+
+    const plainPayload: EditMessageTextParams = {
+      chat_id: message.chat.id,
+      message_id: message.message_id,
+      text: renderStartPage(page, locale, bot),
+      link_preview_options: { is_disabled: true },
+      reply_markup: startKeyboard(page, locale),
+    };
+
+    const fallback = await ctx.bot.call("editMessageText", plainPayload);
+
+    if (!fallback.ok) {
+      ctx.logger.warn("editMessageText plain fallback failed for /start pager", {
+        error: fallback.error,
+        callback_query_id: query.id,
+        page,
+      });
+    }
   }
 
   return true;
@@ -109,7 +141,7 @@ function renderStartPage(
   bot: string,
 ): string {
   const safePage = clampPage(page, START_PAGES.length);
-  const item = START_PAGES[safePage] ?? START_PAGES[0]!;
+  const item = START_PAGES[safePage] ?? FIRST_START_PAGE;
 
   return [
     t(locale, item.title),
@@ -184,6 +216,41 @@ async function answerCallback(
   }
 }
 
+function renderStartPageRichSource(
+  page: number,
+  locale: Locale,
+  bot: string,
+): RichSource {
+  const safePage = clampPage(page, START_PAGES.length);
+  const item = START_PAGES[safePage] ?? FIRST_START_PAGE;
+  const title = t(locale, item.title);
+  const body = t(locale, item.body, { bot });
+  const counter = t(locale, "start.pageCounter", {
+    page: safePage + 1,
+    total: START_PAGES.length,
+  });
+
+  return {
+    mode: "html",
+    title,
+    description: counter,
+    content: [
+      `<h3>${escapeHtml(title)}</h3>`,
+      startBodyToHtml(body),
+      `<footer>${escapeHtml(counter)}</footer>`,
+    ].join("\n"),
+  };
+}
+
+function startBodyToHtml(body: string): string {
+  return body
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .map((paragraph) => `<p>${htmlInline(paragraph)}</p>`)
+    .join("\n");
+}
+
 function startCallbackData(page: number): string {
   return `${START_CALLBACK_PREFIX}${page}`;
 }
@@ -191,8 +258,4 @@ function startCallbackData(page: number): string {
 function clampPage(page: number, total: number): number {
   if (total <= 0) return 0;
   return Math.min(Math.max(Math.trunc(page), 0), total - 1);
-}
-
-function botMention(botUsername?: string): string {
-  return botUsername ? `@${botUsername}` : "@YourBot";
 }

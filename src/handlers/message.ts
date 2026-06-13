@@ -1,11 +1,12 @@
 import type { AppContext } from "../context";
 import { localeFromTelegramLanguage, t, type Locale } from "../i18n";
-import { sendPlain, sendRichOrFallback } from "./common";
+import { sendNotice, sendPlain, sendRichOrFallback, sendRichSourceOrPlain } from "./common";
 import { demoMarkdown, helpMarkdown } from "../rich/demo";
 import { DOC_TTL_SECONDS } from "../rich/limits";
-import { formatLintResult, lintRichSource, lintUsage } from "../rich/lint";
+import { formatLintResult, formatLintResultRichSource, lintRichSource, lintUsage } from "../rich/lint";
 import { sourceFromText } from "../rich/parser";
 import type { Message } from "../telegram/types";
+import { botMention, normalizeBotUsername } from "../utils/botUsername";
 import { sendStart } from "./start";
 
 interface Command {
@@ -31,7 +32,7 @@ export async function handleTextMessage(ctx: AppContext, message: Message): Prom
         mode: "markdown",
         content: helpMarkdown(ctx.env.BOT_USERNAME, locale),
         title: t(locale, "command.help.title"),
-        description: t(locale, "command.help.description")
+        description: t(locale, "command.help.description"),
       }, locale);
       return;
 
@@ -40,7 +41,7 @@ export async function handleTextMessage(ctx: AppContext, message: Message): Prom
         mode: "markdown",
         content: demoMarkdown(locale),
         title: t(locale, "command.demo.title"),
-        description: t(locale, "command.demo.description")
+        description: t(locale, "command.demo.description"),
       }, locale);
       return;
 
@@ -85,7 +86,12 @@ async function lintNow(
 
   const src = sourceFromText(input, locale);
   const result = lintRichSource(src);
-  await sendPlain(ctx, message.chat.id, formatLintResult(src, result, locale));
+  await sendRichSourceOrPlain(
+    ctx,
+    message.chat.id,
+    formatLintResultRichSource(src, result, locale),
+    formatLintResult(src, result, locale),
+  );
 }
 
 async function saveDraft(
@@ -116,25 +122,39 @@ async function saveDraft(
     return;
   }
 
-  const bot = ctx.env.BOT_USERNAME ? `@${ctx.env.BOT_USERNAME}` : "@YourBot";
+  const bot = botMention(ctx.env.BOT_USERNAME);
   const days = Math.round(DOC_TTL_SECONDS / 86400);
+  const query = saved.value.query;
 
-  await sendPlain(ctx, chatId, [
-    t(locale, "save.saved"),
-    "",
-    t(locale, "save.inlineUsage", { bot, query: saved.value.query }),
-    t(locale, "save.expires", { days })
-  ].join("\n"), {
+  await sendNotice(ctx, chatId, {
+    kind: "success",
+    title: t(locale, "save.saved"),
+    paragraphs: [
+      t(locale, "save.expires", { days }),
+    ],
+    facts: [
+      {
+        label: t(locale, "save.notice.inlineLabel"),
+        value: `${bot} ${query}`,
+        code: true,
+      },
+      {
+        label: t(locale, "save.notice.refLabel"),
+        value: query,
+        code: true,
+      },
+    ],
+  }, {
     reply_markup: {
       inline_keyboard: [
         [
           {
             text: t(locale, "save.insertButton"),
-            switch_inline_query: saved.value.query
-          }
-        ]
-      ]
-    }
+            switch_inline_query: query,
+          },
+        ],
+      ],
+    },
   });
 }
 
@@ -142,17 +162,18 @@ function parseCommand(text: string, ownBotUsername?: string): Command | null {
   const match = text.match(/^\/([A-Za-z0-9_]+)(?:@([A-Za-z0-9_]+))?(?:\s|$)/);
   if (!match) return null;
 
-  const name = (match?.[1] ?? "").toLowerCase();
-  const target = match?.[2]!;
+  const name = (match[1] ?? "").toLowerCase();
+  const target = match[2];
+  const own = normalizeBotUsername(ownBotUsername);
 
   if (target) {
-    if (!ownBotUsername) return null;
-    if (target.toLowerCase() !== ownBotUsername.toLowerCase()) return null;
+    if (!own) return null;
+    if (target.toLowerCase() !== own.toLowerCase()) return null;
   }
 
   return {
     name,
-    target,
+    ...(target ? { target } : {}),
     args: text.slice(match[0].length),
   };
 }

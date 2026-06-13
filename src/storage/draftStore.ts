@@ -19,7 +19,7 @@ export interface SavedDraft {
 }
 
 export class DraftStore {
-  constructor(private readonly kv?: KVNamespace) {}
+  constructor(private readonly kv?: KVNamespace) { }
 
   get available(): boolean {
     return Boolean(this.kv);
