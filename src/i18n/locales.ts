@@ -27,6 +27,9 @@ const zh = {
   "inline.sourceLabel": "源码：",
   "inline.plainTitle": "仅发送源码",
   "inline.plainDescription": "不解析富文本",
+  "inline.lint.truncatedTitle": "Inline query 可能已被 Telegram 截断",
+"inline.lint.truncatedDescription": "Inline query 已达到 256 字符上限。长文本请使用 /save 后通过 ref:<key> 调用。",
+"inline.lint.truncatedBody": "Inline query 可能已被 Telegram 截断。",
 
   "parser.html.title": "渲染为富文本 HTML",
   "parser.html.description": "支持 <table>、<tg-math-block> 等 Telegram Rich HTML",
@@ -175,6 +178,9 @@ export const messages: Record<Locale, Record<I18nKey, string>> = {
     "inline.sourceLabel": "Source:",
     "inline.plainTitle": "Send source only",
     "inline.plainDescription": "Do not parse rich text",
+    "inline.lint.truncatedTitle": "Inline query may be truncated by Telegram",
+"inline.lint.truncatedDescription": "The inline query has reached Telegram's 256-character limit. Use /save and then ref:<key> for long text.",
+"inline.lint.truncatedBody": "The inline query may have been truncated by Telegram.",
 
     "parser.html.title": "Render as Rich HTML",
     "parser.html.description": "Supports Telegram Rich HTML such as <table> and <tg-math-block>",
@@ -316,6 +322,9 @@ export const messages: Record<Locale, Record<I18nKey, string>> = {
     "inline.sourceLabel": "ソース：",
     "inline.plainTitle": "ソースだけを送信",
     "inline.plainDescription": "リッチテキストとして解析しない",
+    "inline.lint.truncatedTitle": "Inline query が Telegram により切り詰められた可能性があります",
+"inline.lint.truncatedDescription": "Inline query が Telegram の 256 文字上限に達しています。長文は /save 後に ref:<key> で呼び出してください。",
+"inline.lint.truncatedBody": "Inline query が Telegram により切り詰められた可能性があります。",
 
     "parser.html.title": "Rich HTML としてレンダリング",
     "parser.html.description": "<table>、<tg-math-block> などの Telegram Rich HTML に対応",
